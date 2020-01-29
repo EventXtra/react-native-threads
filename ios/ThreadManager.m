@@ -9,6 +9,11 @@ NSMutableDictionary *threads;
 
 RCT_EXPORT_MODULE();
 
+- (NSArray<NSString *> *)supportedEvents
+{
+  return @[@"ThreadMessage"];
+}
+
 RCT_REMAP_METHOD(startThread,
                  name: (NSString *)name
                  resolver:(RCTPromiseResolveBlock)resolve
@@ -67,8 +72,9 @@ RCT_EXPORT_METHOD(postThreadMessage: (int)threadId message:(NSString *)message)
     return;
   }
 
-  [threadBridge.eventDispatcher sendAppEventWithName:@"ThreadMessage"
-                                               body:message];
+  NSLog(@"Post thread %i msg: %@", threadId, message);
+
+  [self sendEventWithName:@"ThreadMessage" body:message];
 }
 
 - (void)invalidate {

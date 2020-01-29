@@ -9,6 +9,12 @@ RCT_EXPORT_MODULE();
 @synthesize parentBridge = _parentBridge;
 @synthesize threadId = _threadId;
 
+- (NSArray<NSString *> *)supportedEvents
+{
+  NSString *eventName = [NSString stringWithFormat:@"Thread%i", self.threadId];
+  return @[@"ThreadMessage"];
+}
+
 RCT_EXPORT_METHOD(postMessage: (NSString *)message)
 {
   if (self.parentBridge == nil) {
@@ -18,8 +24,7 @@ RCT_EXPORT_METHOD(postMessage: (NSString *)message)
 
   NSString *eventName = [NSString stringWithFormat:@"Thread%i", self.threadId];
 
-  [self.parentBridge.eventDispatcher sendAppEventWithName:eventName
-                                               body:message];
+  [self sendEventWithName:eventName body:message];
 }
 
 @end

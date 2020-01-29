@@ -1,6 +1,6 @@
 import {
   NativeModules,
-  DeviceEventEmitter,
+  NativeEventEmitter
 } from 'react-native';
 
 const { ThreadManager } = NativeModules;
@@ -11,9 +11,12 @@ export default class Thread {
       throw new Error('Invalid path for thread. Only js files are supported');
     }
 
+    this.eventEmitter = new NativeEventEmitter(ThreadManager)
+
     this.id = ThreadManager.startThread(jsPath.replace(".js", ""))
       .then(id => {
-        DeviceEventEmitter.addListener(`Thread${id}`, (message) => {
+        this.eventEmitter.addListener(`ThreadMessage`, (message) => {
+          console.log(`Thread ${id} Received ThreadMessage ${message}`);
           !!message && this.onmessage && this.onmessage(message);
         });
         return id;

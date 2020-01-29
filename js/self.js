@@ -1,6 +1,6 @@
 import {
   NativeModules,
-  DeviceEventEmitter,
+  NativeEventEmitter
 } from 'react-native';
 
 const { ThreadSelfManager } = NativeModules;
@@ -11,10 +11,12 @@ const self = {
   postMessage: (message) => {
     if (!message) { return; }
     ThreadSelfManager.postMessage(message);
-  }
+  },
+
+  eventEmitter: new NativeEventEmitter(ThreadSelfManager)
 };
 
-DeviceEventEmitter.addListener('ThreadMessage', (message) => {
+self.eventEmitter.addListener('ThreadMessage', (message) => {
   !!message && self.onmessage && self.onmessage(message);
 });
 
